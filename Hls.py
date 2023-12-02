@@ -56,22 +56,41 @@ parser.add_argument(
         "debug",
         "trace",
     ],
-    default="info",
+    default="quiet",
     type=str,
     required=False,
 )
 args = parser.parse_args()
-try:
-    ffmpeg.input(args.Video_Input).output(
-        f"{args.directory}/{args.Name}.m3u8",
-        start_number=1,
-        hls_time=args.Time,
-        hls_list_size=0,
-        hls_segment_filename=f"{args.directory}/{args.Name}_%03d.{args.Extension}",
-        loglevel=args.Log,
-    ).run()
-except:
-    print("We have an error in ffmpeg config , please try agian with another data")
+
+
+dir_input_exsit = os.path.exists(f"{args.Video_Input}")
+dir_output_exsit = os.path.exists(args.directory)
+
+
+def output():
+    if dir_input_exsit == False:
+        print("Video input is not valid ")
+    else:
+        if dir_output_exsit == False:
+            os.system(f"mkdir {args.directory}")
+            try:
+                ffmpeg.input(args.Video_Input).output(
+                    f"{args.directory}/{args.Name}.m3u8",
+                    start_number=1,
+                    hls_time=args.Time,
+                    hls_list_size=0,
+                    hls_segment_filename=f"{args.directory}/{args.Name}_%03d.{args.Extension}",
+                    loglevel=args.Log,
+                ).run()
+                print("finsh")
+            except:
+                print(
+                    "We have an error in ffmpeg config , please try agian with another data"
+                )
+
+
+output()
+
 
 """
 loglevel_Values=
